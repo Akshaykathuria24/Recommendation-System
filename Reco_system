@@ -1,0 +1,30 @@
+import pandas as pd 
+import numpy as np 
+import matplotlib as plt
+df=pd.read_csv('/Users/akshaykathuria/Documents/Data Sets/IMDB-Movie-Data.csv')
+
+
+C= df['Rating'].mean()
+m= df['Votes'].quantile(0.9)
+
+q_movies = df.copy().loc[df['Votes'] >= m]
+
+def weighted_rating(x, m=m, C=C):
+    v = x['Rating']
+    R = x['Votes']
+    return (v/(v+m) * R) + (m/(m+v) * C)
+
+q_movies['Metascore'] = q_movies.apply(weighted_rating, axis=1)
+q_movies = q_movies.sort_values('Metascore', ascending=False)
+q_movies[['Title', 'Genre', 'Votes', 'Metascore']].head(10)
+
+pop= df.sort_values('Runtime (Minutes)', ascending=False)
+import matplotlib.pyplot as plt
+plt.figure(figsize=(12,4))
+
+plt.barh(pop['Title'].head(6),pop['Runtime (Minutes)'].head(6), align='center',
+        color='skyblue')
+plt.gca().invert_yaxis()
+plt.xlabel("Runtime")
+plt.title("Runtime (Minutes)")
+print(pop)
