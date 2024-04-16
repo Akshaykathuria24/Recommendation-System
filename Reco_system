@@ -7,37 +7,37 @@ from ast import literal_eval
 
 df = pd.read_csv('/Users/akshaykathuria/Documents/Data Sets/IMDB-Movie-Data.csv')
 
-C = df['Rating'].mean()
-m = df['Votes'].quantile(0.9)
+C = df['rating'].mean()
+m = df['votes'].quantile(0.9)
 
 q_movies = df.copy().loc[df['Votes'] >= m]
 
 def weighted_rating(x, m=m, C=C):
-    v = x['Rating']
-    R = x['Votes']
+    v = x['rating']
+    R = x['votes']
     return (v/(v+m) * R) + (m/(m+v) * C)
 
-q_movies['Metascore'] = q_movies.apply(weighted_rating, axis=1)
-q_movies = q_movies.sort_values('Metascore', ascending=False)
-q_movies[['Title', 'Genre', 'Votes', 'Metascore']].head(10)
+q_movies['metascore'] = q_movies.apply(weighted_rating, axis=1)
+q_movies = q_movies.sort_values('metascore', ascending=False)
+q_movies[['title', 'type', 'votes', 'metascore']].head(10)
 
-pop = df.sort_values('Runtime (Minutes)', ascending=False)
+pop = df.sort_values('duration', ascending=False)
 
 plt.figure(figsize=(12,4))
-plt.barh(pop['Title'].head(6), pop['Runtime (Minutes)'].head(6), align='center', color='skyblue')
+plt.barh(pop['title'].head(6), pop['duration'].head(6), align='center', color='skyblue')
 plt.gca().invert_yaxis()
 plt.xlabel("Runtime")
-plt.title("Runtime (Minutes)")
+plt.title("duration")
 
 tfidf = TfidfVectorizer(stop_words='english')
 
-df['Director'] = df['Director'].fillna('')
+df['director'] = df['director'].fillna('')
 
-tfidf_matrix = tfidf.fit_transform(df['Director'])
+tfidf_matrix = tfidf.fit_transform(df['director'])
 tfidf_matrix.shape
 
 cosine_sim = linear_kernel(tfidf_matrix, tfidf_matrix)
-indices = pd.Series(df.index, index=df['Title']).drop_duplicates()
+indices = pd.Series(df.index, index=df['title']).drop_duplicates()
 
 def get_recommendations(Title, cosine_sim=cosine_sim):
     idx = indices[Title]
@@ -45,7 +45,7 @@ def get_recommendations(Title, cosine_sim=cosine_sim):
     sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
     sim_scores = sim_scores[1:11]
     movie_indices = [i[0] for i in sim_scores]
-    return df['Title'].iloc[movie_indices]
+    return df['title'].iloc[movie_indices]
 
 movies = get_recommendations('Moonlight')
 movies2 = get_recommendations('Cars')
