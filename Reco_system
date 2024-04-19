@@ -5,7 +5,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from ast import literal_eval
 
-df = pd.read_csv('/Users/akshaykathuria/Documents/Data Sets/modified_csv_file3.csv')
+df = pd.read_csv('/Users/akshaykathuria/Documents/Data Sets/modified_csv_file3.xlsx')
 print(df)
 C = df['rating'].mean()
 m = df['votes'].quantile(0.9)
@@ -76,12 +76,15 @@ for feature in features:
 
     df['Title', 'Genre', 'Description' 'Director', 'Actors'].head(3)
 
-problematic_column = 'Guardian of the Galaxy'
-print(df[problematic_column].unique())
-def clean_function(text):
-    cleaned_text = ''.join(char for char in text if char.isalnum() or char.isspace())
-    return cleaned_text
-print(clean_function)
+def clean_data(x):
+    if isinstance(x, list):
+        return [str.lower(i.replace(" ", "")) for i in x]
+    else:
+        #Check if director exists. If not, return empty string
+        if isinstance(x, str):
+            return str.lower(x.replace(" ", ""))
+        else:
+            return ''
 
 
 
