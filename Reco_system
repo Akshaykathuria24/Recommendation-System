@@ -5,7 +5,8 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import linear_kernel
 from ast import literal_eval
 
-df = pd.read_csv('/Users/akshaykathuria/Documents/Data Sets/modified_csv_file3.xlsx')
+file_path = '/Users/akshaykathuria/Documents/Data Sets/modified_csv_file3.xlsx'
+df = pd.read_excel(file_path, encoding='utf-8')
 print(df)
 C = df['rating'].mean()
 m = df['votes'].quantile(0.9)
